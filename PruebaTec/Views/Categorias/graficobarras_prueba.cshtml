@@ -1,13 +1,12 @@
-﻿<div>
+﻿
+<div>
   <canvas id="myChart"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<canvas id="myChart"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+@*<script>
   fetch('/api/grafico')
     .then(response => response.json())
     .then(data => {
@@ -29,6 +28,61 @@
           }]
         },
         options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+</script>*@
+<script>
+  fetch('/api/grafico')
+    .then(response => response.json())
+    .then(data => {
+      const labels = data.map(item => item.nombre);
+      const valores = data.map(item => item.valor);
+
+      // Paleta de colores
+      const colores = [
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(54, 162, 235, 0.6)',
+        'rgba(255, 206, 86, 0.6)',
+        'rgba(75, 192, 192, 0.6)',
+        'rgba(153, 102, 255, 0.6)',
+        'rgba(255, 159, 64, 0.6)',
+        'rgba(100, 255, 218, 0.6)',
+        'rgba(140, 82, 255, 0.6)',
+        'rgba(255, 105, 180, 0.6)',
+        'rgba(0, 200, 83, 0.6)'
+      ];
+
+      // Asignar un color diferente para cada barra que hay
+      const backgroundColors = valores.map((_, index) => colores[index % colores.length]);
+      const borderColors = backgroundColors.map(color => color.replace('0.6', '1'));
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Valores por categoría',
+            data: valores,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             y: {
               beginAtZero: true
